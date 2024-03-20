@@ -1,0 +1,6 @@
+Pillow
+protobuf
+streamlit
+google-generativeai
+PyPDF2
+gspread
