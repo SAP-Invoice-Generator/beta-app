@@ -5,13 +5,23 @@ from PyPDF2 import PdfReader
 
 import gspread
 
-gc = gspread.service_account(filename='credentials.json')
-sheet = gc.open_by_key("1oqT3sBJ2LpY2DAhSRYhMiBtVSoTfqMHjSjxJnhOV-9g")
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+CREDENTIALS_JSON = os.getenv('CREDENTIALS_JSON')
+SHEET_KEY=os.getenv('SHEET_KEY')
+GEMINI_KEY=os.getenv('GEMINI_KEY')
+
+
+gc = gspread.service_account(filename=CREDENTIALS_JSON)
+sheet = gc.open_by_key(SHEET_KEY)
 worksheet = sheet.sheet1
 
 
 # Ensure the API key is configured
-genai.configure(api_key="AIzaSyCnrTo0OAgZNMVoPGjVhBNllossBP6FVKY")
+genai.configure(api_key=GEMINI_KEY)
 model1 = genai.GenerativeModel('gemini-pro')
 model2 = genai.GenerativeModel('gemini-pro-vision')
 
@@ -54,10 +64,10 @@ def main():
     st.set_page_config(page_title="Gemini Demo")
     st.header("Gemini Application")
 
-    input = '''give me the details of the invoice like invoice number, date, total amount,currency type, no of items, customer name ,
+    input = '''give me the details of the invoice like invoice name, invoice number,invoice company, date, total amount, no of items, 
     i need only these fields do not give me any extra details ok?  
     if any field is not available, return them as NULL,
-    i need all detials as a python dictionary'''
+    i need all detials as a python dictionary  '''
 
     # Dynamic rows to store details
     details = []
@@ -89,7 +99,7 @@ def main():
             # for x in response:
             #     respons_lst.append(x)
             print(respons_lst)
-            for i in respons_lst:
+            for i in respons_lst[:-1]:
                 if i not in ['{','}',"'","```"]:
                     details.append(i)
             details.pop(0)
