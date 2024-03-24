@@ -70,7 +70,7 @@ def main():
     st.set_page_config(page_title="Gemini Demo")
     st.header("Gemini Application")
 
-    input = '''give me the details of the invoice like invoice name, invoice number,invoice company, date, total amount, no of items, 
+    input = '''give me the details of the invoice like invoice name, invoice number as a integer,invoice company, date, total amount as a integer , no of items as a integer, 
     i need only these fields do not give me any extra details ok?  
     if any field is not available, return them as NULL,
     i need all detials as a python dictionary  '''
