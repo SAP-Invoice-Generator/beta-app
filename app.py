@@ -2,6 +2,8 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 from PyPDF2 import PdfReader
+from supabase import create_client, Client 
+
 
 import gspread
 
@@ -13,6 +15,10 @@ load_dotenv()
 CREDENTIALS_JSON = os.getenv('CREDENTIALS_JSON')
 SHEET_KEY=os.getenv('SHEET_KEY')
 GEMINI_KEY=os.getenv('GEMINI_KEY')
+SUPABASE_KEY=os.getenv('SUPERBASE_KEY')
+SUPABASE_URL=os.getenv('SUPERBASE_URL')
+
+supabase : Client = create_client(SUPABASE_URL,SUPABASE_KEY)
 
 
 gc = gspread.service_account(filename=CREDENTIALS_JSON)
@@ -114,7 +120,15 @@ def main():
                 val=val.replace(",","")
                 print(key," corresponding value is ",val)
                 response_dict[key] = val
-            
+            supabase.table("Invoices").insert({
+                "invoice_id": int(response_dict['invoice_number']), 
+                "invoice_name": response_dict['invoice_name'],
+                # "date":response_dict['date'], 
+                "invoice_company":response_dict['invoice_company'],
+                "invoice_no": int(response_dict['invoice_number']),   
+                "total_amount":int(response_dict['total_amount']),  
+                "no_of_items":int(response_dict['no_of_items'])
+            }).execute()
             # Split the response by newline characters to separate key-value pairs
             # pairs = response.strip().split('\n')
 
@@ -148,7 +162,7 @@ def main():
                 values.append(value)
             worksheet.append_row(values)
                 
-
+            print(response_dict)
 
 
 if __name__ == "__main__":
